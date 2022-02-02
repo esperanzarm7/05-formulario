@@ -1,6 +1,6 @@
 <h4>Formularios <small> reactivo </small></h4>
 <hr>
-<form autocomplete="off">
+<form autocomplete="off" [formGroup]="forma" (ngSubmit)="guardar(forma)">
 
   <div>
 
@@ -10,7 +10,10 @@
 
         <input class="form-control"
                type="text"
-               placeholder="Nombre">
+               placeholder="Nombre"
+               formControlName="nombre"
+               [class.is-invalid]="!validar('nombre')">
+        <small class="form-text text-danger" *ngIf="!validar('nombre')">Debe contener al menos 5 caracteres</small>
       </div>
     </div>
 
@@ -20,7 +23,10 @@
 
         <input class="form-control"
                type="text"
-               placeholder="Apellido">
+               placeholder="Apellido"
+               formControlName="apellido"
+               [class.is-invalid]="!validar('apellido')">
+        <small class="form-text text-danger" *ngIf="!validar('apellido')">Debe contener al menos 5 caracteres</small>
       </div>
     </div>
 
@@ -32,9 +38,98 @@
 
       <input class="form-control"
              type="email"
-             placeholder="Correo electrónico">
+             placeholder="Correo electrónico"
+             formControlName="email"
+             [class.is-invalid]="!validar('email')">
     </div>
   </div>
+
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Usuario</label>
+    <div class="col-8">
+      <input class="form-control"
+             type="text"
+             placeholder="Nombre de usuario"
+             formControlName="usuario"
+             [class.is-invalid]="!validar('usuario')" />
+      <small *ngIf="!validar('usuario')" class="text-danger">Ese nombre de usuario ya existe</small>
+    </div>
+  </div>
+
+
+
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Contraseña</label>
+    <div class="col-8">
+      <input class="form-control"
+             type="password"
+             placeholder="Contraseña"
+             formControlName="pass1"
+             [class.is-invalid]="!validar('pass1')"
+      />
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Repetir contraseña</label>
+    <div class="col-8">
+      <input class="form-control"
+             type="password"
+             placeholder="Contraseña"
+             formControlName="pass2"
+             [class.is-invalid]="!pass2Valido || !validar('pass2')"
+      />
+    </div>
+  </div>
+
+
+  <div class="form-group row" formGroupName="direccion">
+    <label class="col-2 col-form-label">Dirección</label>
+    <div class="form-row col-8 pr-1">
+      <div class="col">
+        <input type="text"
+               class="form-control"
+               placeholder="Distrito"
+               formControlName="distrito"
+               [class.is-invalid]="!validar('direccion.distrito')"
+        />
+      </div>
+      <div class="col">
+        <input type="text"
+               class="form-control"
+               placeholder="Ciudad"
+               formControlName="ciudad"
+               [class.is-invalid]="!validar('direccion.ciudad')"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-8 offset-2">
+      <table class="table">
+        <thead class="thead-dark">
+        <tr>
+          <th>ID</th>
+          <th>Pasatiempo</th>
+          <th>Borrar</th>
+        </tr>
+        </thead>
+        <tbody formArrayName="pasatiempos">
+        <tr *ngFor="let pasatiempo of pasatiempos.controls; let i = index">
+          <td>{{this.i+1}}</td>
+          <td>
+            <input type="text" class="form-control" [formControlName]="i" >
+          </td>
+          <td><button class="btn btn-danger" (click)="borrarPasatiempo(i)">Borrar</button></td>
+        </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-outline-secondary btn-block my-5" type="button" (click)="agregarPasatiempo()">+ Añadir</button>
+
+    </div>
+  </div>
+
+
 
 
 
@@ -48,3 +143,12 @@
   </div>
 
 </form>
+
+<hr />
+<pre>
+  Formulario válido: {{ forma.valid }}
+  Status: {{ forma.status }}
+  <hr />
+  {{ forma.value | json }}
+</pre>
+

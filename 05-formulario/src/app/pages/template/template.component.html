@@ -12,7 +12,8 @@
                type="text"
                placeholder="Nombre" name="nombre" [(ngModel)]="usuario.nombre" required minlength="5" [class.is-invalid]="nombre.invalid && nombre.touched"
                #nombre="ngModel">
-      <small class="form-text y text-danger"*ngIf="nombre.invalid && nombre.touched">Debe contener al menos 5 caracteres</small>
+
+
 
       </div>
     </div>
