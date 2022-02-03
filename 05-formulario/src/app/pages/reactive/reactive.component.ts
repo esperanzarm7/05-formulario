@@ -11,6 +11,7 @@ import {ValidacionesService} from "../../service/validaciones.service";
 export class ReactiveComponent implements OnInit {
 
   forma!: FormGroup;
+  popup:boolean=false;
 
 
 
@@ -50,7 +51,7 @@ export class ReactiveComponent implements OnInit {
 
   //es recursiva.
   guardar(grupo:FormGroup){
-
+    this.alerta();
     if (grupo.invalid) {
       Object.values(grupo.controls).forEach(control => {
         if (control instanceof FormGroup)
@@ -63,8 +64,30 @@ export class ReactiveComponent implements OnInit {
     this.forma.reset();
   }
 
+  alerta(){
+    this.popup=true;
+  }
+  openPopup(){
+    const dialogConfig = new MatDialogConfig();
 
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
 
+    const dialogRef = this.dialog.open(PopupCourseComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+      data => {
+        this.saveNewCourse(data);
+      }, error => this.logService.print(error, LogService.ERROR_MSG));
+  }
+
+    private saveNewCourse(courseToInsert: Course) {
+      this.apiService.addCourse(courseToInsert).subscribe();
+    }
+
+    ngOnDestroy(): void {
+      this.sub.unsubscribe();
+    }
 
   validar(campo:any){
     campo=this.forma.get(campo);
