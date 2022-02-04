@@ -15,6 +15,8 @@ export class ReactiveComponent implements OnInit {
 
   forma!: FormGroup;
   popup:boolean=false;
+  control:boolean=false;
+  control2:boolean=false;
 
   fecha = new Date();
   fechaMinima = this.obteneFechaMinima() + "-01-01";

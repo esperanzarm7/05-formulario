@@ -9,7 +9,8 @@ import {PaisService} from "../../service/pais.service";
   ]
 })
 export class TemplateComponent implements OnInit {
-
+control:boolean=false;
+control2:boolean=false;
   nombre:string='';
   usuario = {
     nombre: "",

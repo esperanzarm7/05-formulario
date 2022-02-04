@@ -5,10 +5,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class ContrasenaPipe implements PipeTransform {
 
-  transform(value: string, hide: boolean = true): string {
-
-    return hide ? value.replace(/./g, '*') : value;
-
+  transform(value: boolean, ...args: unknown[]): unknown {
+    if (value == true) {
+      return 'text';
+    } else {
+      return 'password';
+    }
   }
-
 }

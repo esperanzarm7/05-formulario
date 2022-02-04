@@ -112,14 +112,16 @@
     <label class="col-2 col-form-label">Contraseña</label>
     <div class="col-8">
       <input
-        type="password"
+        type="{{control|contrasena}}"
         name="contrasena"
         placeholder="Contraseña"
         [(ngModel)]="usuario.contrasena" required
         (input)="this.contrasena($event)"
-        value="{{ this.usuario.contrasena | contrasena:!this.valorOjo1}}"
+
+
+
       />
-      <div class="d-inline ">
+      <div class="d-inline" (click)="control=!control">
         <img *ngIf="ojo1" (click)="cambioOjo1()" src="./assets/ojocerrado.png">
         <img *ngIf="!ojo1" (click)="cambioOjo1()" src="./assets/ojoabierto.png">
       </div>
@@ -130,13 +132,13 @@
     <label class="col-2 col-form-label">Confirmar Contraseña</label>
     <div class="col-8">
       <input
-        type="password"
+        type="{{control2|contrasena}}"
         name="confirmarcontrasena"
         placeholder="Confirmar Contraseña"
         [(ngModel)]="usuario.confirmarcontrasena" required
-        value="{{ this.usuario.confirmarcontrasena | contrasena:this.valorOjo2}}"
+
       />
-      <div class="d-inline ">
+      <div class="d-inline" (click)="control2=!control2">
         <img *ngIf="ojo2" (click)="cambioOjo2()" src="./assets/ojocerrado.png">
         <img *ngIf="!ojo2" (click)="cambioOjo2()" src="./assets/ojoabierto.png">
       </div>
