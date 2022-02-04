@@ -1,6 +1,3 @@
-<div class="alert alert-danger" *ngIf="popup">
-
-</div>
 <h4>Formularios <small> reactivo </small></h4>
 <hr>
 <form autocomplete="off" [formGroup]="forma" (ngSubmit)="mostrarDialogo(forma)">
@@ -59,20 +56,22 @@
   </div>
 
   <div class="form-group row">
-    <label class="col-2 col-form-label">Fecha</label>
+    <label class="col-2 col-form-label">Fecha de nacimiento</label>
     <div class="col-8">
       <input type="date"
              formControlName="fecha"
              placeholder="yyyy-MM-dd"
              min="{{this.fechaMaxima}}" max="{{this.fechaMinima}}"
              [class.is-invalid]="!validar('fecha')"/>
+      <small *ngIf="!validar('fecha')" class="form-text text-danger">Indique fecha de nacimiento </small>
     </div>
   </div>
   <div class="form-group row">
-    <label class="col-2 col-form-label">Fecha</label>
+    <label class="col-2 col-form-label">Color</label>
     <div class="col-8">
       <input type="color"
              formControlName="color" [class.is-invalid]="!validar('color')"/>
+      <small *ngIf="!validar('color')" class="form-text text-danger">Indique un color </small>
     </div>
   </div>
 
@@ -162,7 +161,7 @@
   <div class="form-group row">
     <label class="col-2 col-form-label">&nbsp;</label>
     <div class="input-group col-md-8">
-      <button  class="w-25 btn btn-outline-danger btn-block" (click)="this.resetForm(forma)">reset</button>
+      <button type="button" class="w-25 btn btn-outline-danger btn-block" (click)="this.resetForm(forma)">reset</button>
     </div>
   </div>
 

@@ -15,8 +15,6 @@ export class ReactiveComponent implements OnInit {
 
   forma!: FormGroup;
   popup:boolean=false;
-  control:boolean=false;
-  control2:boolean=false;
 
   fecha = new Date();
   fechaMinima = this.obteneFechaMinima() + "-01-01";
@@ -27,16 +25,14 @@ export class ReactiveComponent implements OnInit {
   seguridad = 0;
 
   ojo1=false;
-  valorOjo1=false;
   ojo2=false;
-  valorOjo2=false;
+  control:boolean=false;
+  control2:boolean=false;
 
   constructor(private formBuilder:FormBuilder, private validadores:ValidacionesService, public dialogo:MatDialog, ) {
 
     this.ojo1=true;
     this.ojo2=true;
-    this.valorOjo1=true;
-    this.valorOjo2=true;
 
     this.crearFormulario();
     this.cargarDatosFormulario();
@@ -65,8 +61,6 @@ export class ReactiveComponent implements OnInit {
     })
 
   }
-
-
 
   crearFormulario(){
 
@@ -100,11 +94,9 @@ export class ReactiveComponent implements OnInit {
     if(this.ojo1)
     {
       this.ojo1=false;
-      this.valorOjo1=false;
     }else
     {
       this.ojo1=true;
-      this.valorOjo1=true;
     }
   }
   async cambioOjo2()
@@ -112,11 +104,9 @@ export class ReactiveComponent implements OnInit {
     if(this.ojo2)
     {
       this.ojo2=false;
-      this.valorOjo2=false;
     }else
     {
       this.ojo2=true;
-      this.valorOjo2=true;
     }
   }
 
@@ -141,8 +131,6 @@ export class ReactiveComponent implements OnInit {
     }
   }
 
-
-
   validar(campo:any){
     campo=this.forma.get(campo);
     return !(campo.invalid && campo.touched)
@@ -160,16 +148,11 @@ export class ReactiveComponent implements OnInit {
 
     })
     pasatiempos:["comer", "dormir"].forEach(valor => this.pasatiempos.push(this.formBuilder.control(valor)))
-    // lenguajes:["angular", "js","booststrap","php","css"].forEach(valor => this.lenguajes.push(this.formBuilder.control(valor)))
   }
 
   get pasatiempos() {
     return this.forma.get('pasatiempos') as FormArray;
   }
-  // get lenguajes() {
-  //   return this.forma.get('lenguajes') as FormArray;
-  // }
-
 
   agregarPasatiempo() {
     this.pasatiempos.push(this.formBuilder.control('', Validators.required));
@@ -206,10 +189,6 @@ export class ReactiveComponent implements OnInit {
   }
 
   contrasena(contrasena: any) {
-
-    console.log(contrasena.target.value)
-    console.log(this.seguridad)
-    console.log("aa"+contrasena.target.value.length)
     let barra: any = document.getElementById("barra");
     let caracteresEspeciales = ["!", "#", "$", "%", "&", "'", "(", ")", "+", "-", "€", "@", "/", "¿", "?", "¡", "_", "<", ">"];
     let mayusculas = 0;
@@ -217,7 +196,7 @@ export class ReactiveComponent implements OnInit {
 
     if (contrasena.target.value.length < this.cantidadCaracteres) {
       this.seguridad = this.seguridad - ((this.cantidadCaracteres - contrasena.target.value.length) * 3);
-      console.log(this.cantidadCaracteres +"-"+ contrasena.target.value.length+"="+this.seguridad)
+
       let contrasenaMayusculas=contrasena.target.value.toUpperCase();
       for (let i = 0; i <= contrasena.target.value.length; i++) {
         for (let j = 0; j < contrasenaMayusculas.length; j++) {
@@ -226,20 +205,19 @@ export class ReactiveComponent implements OnInit {
           }
         }
       }
-      if (mayusculas < this.cantidadMayusculas) {
+      if (mayusculas!=0 && mayusculas < this.cantidadMayusculas) {
         this.seguridad = this.seguridad - ((this.cantidadMayusculas - mayusculas) * 5);
       }
       for (let i = 0; i <= caracteresEspeciales.length; i++) {
         for (let j = 0; j < contrasena.target.value.length; j++) {
           if (contrasena.target.value[j] == caracteresEspeciales[i]) {
             especial++;
-            if (especial < this.cantidadEspeciales) {
-              this.seguridad = this.seguridad - ((this.cantidadEspeciales - especial) * 10);
-            }
           }
         }
       }
-
+      if (especial!=0 && especial < this.cantidadEspeciales) {
+        this.seguridad = this.seguridad - ((this.cantidadEspeciales - especial) * 10);
+      }
     } else {
       this.cantidadCaracteres++;
       this.seguridad = this.seguridad + 3;
@@ -260,6 +238,13 @@ export class ReactiveComponent implements OnInit {
       }
     }
 
+    if(this.seguridad<0){
+      this.seguridad=0;
+    }
+    this.cantidadCaracteres=contrasena.target.value.length;
+    this.cantidadMayusculas=mayusculas;
+    this.cantidadEspeciales=especial;
+
     barra.style.width = this.seguridad + "%";
     barra.style.height = "5px";
 
@@ -273,9 +258,6 @@ export class ReactiveComponent implements OnInit {
       }
     }
 
-    this.cantidadCaracteres=contrasena.target.value.length;
-    this.cantidadMayusculas=mayusculas;
-    this.cantidadEspeciales=especial;
   }
 
 }

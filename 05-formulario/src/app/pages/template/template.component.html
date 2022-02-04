@@ -1,9 +1,6 @@
-<div class="alert alert-danger" *ngIf="popup">
-
-</div>
 <h4>Formularios <small> template </small></h4>
 <hr>
-<form autocomplete="off" (ngSubmit)="guardar(forma)" #forma="ngForm">
+<form autocomplete="off" #forma="ngForm" (ngSubmit)="mostrarDialogo(forma)">
 
   <div>
     <div class="form-group row">
@@ -45,11 +42,17 @@
   <div class="form-group row">
     <label class="col-2 col-form-label">Paises</label>
     <div class="col-8">
-      <select #pais name="pais" class="form-control" name="pais" required [(ngModel)]="usuario.pais" [disabled]="paises.length===0" [ngClass]="{'class.is-invalid':pais.value==''}" >
+      <mat-select #pais  class="form-control" name="pais" required [(ngModel)]="usuario.pais" [disabled]="paises.length===0" [ngClass]="{'class.is-invalid':pais.value==''}" >
 
-        <option *ngFor="let pais of paises" [value]="pais.alpha3Code">{{pais.name}}</option>
+        <input list="menace" name="menace">
 
-      </select>
+        <datalist id="menace">
+          <mat-option>
+            <ngx-mat-select-search [formControl]="bankFilterCtr"></ngx-mat-select-search>
+          </mat-option>
+        </datalist>
+        <mat-option *ngFor="let pais of paises " [value]="pais.alpha3Code">{{pais.name}}</mat-option>
+      </mat-select>
     </div>
   </div>
 
@@ -81,13 +84,14 @@
     </div>
   </div>
   <div class="form-group row">
-    <label class="col-2 col-form-label">Fecha</label>
+    <label class="col-2 col-form-label">Fecha de nacimiento</label>
     <div class="col-8">
       <input type="date"
              name="fecha" [(ngModel)]="usuario.fecha"
              placeholder="yyyy-MM-dd"
              min="{{this.fechaMaxima}}" max="{{this.fechaMinima}}"
-             required />
+             required ngModel #fecha="ngModel" [class.is-invalid]="fecha.invalid && fecha.touched"/>
+      <small *ngIf="fecha.invalid && fecha.touched" class="form-text text-danger">Indique fecha de nacimiento </small>
     </div>
   </div>
   <div class="form-group row">
@@ -101,11 +105,12 @@
     </div>
   </div>
   <div class="form-group row">
-    <label class="col-2 col-form-label">Fecha</label>
+    <label class="col-2 col-form-label">Color</label>
     <div class="col-8">
       <input type="color"
              name="color" [(ngModel)]="usuario.color"
-             required />
+             required  ngModel #color="ngModel" [class.is-invalid]="color.invalid && color.touched"/>
+      <small *ngIf="color.invalid && color.touched" class="form-text text-danger">Indique un color </small>
     </div>
   </div>
   <div class="form-group row">
@@ -117,9 +122,7 @@
         placeholder="Contraseña"
         [(ngModel)]="usuario.contrasena" required
         (input)="this.contrasena($event)"
-
-
-
+        ngModel #contrasenaa="ngModel" [class.is-invalid]="contrasenaa.invalid && contrasenaa.touched"
       />
       <div class="d-inline" (click)="control=!control">
         <img *ngIf="ojo1" (click)="cambioOjo1()" src="./assets/ojocerrado.png">
@@ -133,10 +136,10 @@
     <div class="col-8">
       <input
         type="{{control2|contrasena}}"
-        name="confirmarcontrasena"
+        name="confirmarcontrasena" class="ng-invalid"
         placeholder="Confirmar Contraseña"
         [(ngModel)]="usuario.confirmarcontrasena" required
-
+        (input)="this.comprobarContrasenas($event)"
       />
       <div class="d-inline" (click)="control2=!control2">
         <img *ngIf="ojo2" (click)="cambioOjo2()" src="./assets/ojocerrado.png">
@@ -147,7 +150,7 @@
   <div class="form-group row">
     <label class="col-2 col-form-label">&nbsp;</label>
     <div class="input-group col-md-8">
-      <button  class="w-25 btn btn-outline-danger btn-block" (click)="this.resetForm(forma)">reset</button>
+      <button type="button" class="w-25 btn btn-outline-danger btn-block" (click)="this.resetForm(forma)">reset</button>
     </div>
   </div>
   <div class="form-group row">

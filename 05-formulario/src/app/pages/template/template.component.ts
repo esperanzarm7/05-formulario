@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {NgForm} from "@angular/forms";
+import {FormGroup, NgForm} from "@angular/forms";
 import {PaisService} from "../../service/pais.service";
+import {DialogoConfirmacionComponent} from "../../shared/dialogo-confirmacion/dialogo-confirmacion.component";
+import {finalize} from "rxjs/operators";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-template',
@@ -9,8 +12,9 @@ import {PaisService} from "../../service/pais.service";
   ]
 })
 export class TemplateComponent implements OnInit {
-control:boolean=false;
-control2:boolean=false;
+
+  popup:boolean=false;
+
   nombre:string='';
   usuario = {
     nombre: "",
@@ -25,9 +29,9 @@ control2:boolean=false;
     intereses: []
   }
 
+  pais:any;
   paisService:PaisService;
   paises:any[]=[];
-  popup:boolean=false;
 
   fecha = new Date();
   fechaMinima = this.obteneFechaMinima() + "-01-01";
@@ -38,20 +42,21 @@ control2:boolean=false;
   seguridad = 0;
 
   ojo1=false;
-  valorOjo1=false;
   ojo2=false;
-  valorOjo2=false;
+  control:boolean=false;
+  control2:boolean=false;
+  bankCtrl: any;
+  bankFilterCtr: any;
 
-  constructor(paisService:PaisService) {
+  constructor(paisService:PaisService,public dialogo:MatDialog) {
     this.ojo1=true;
     this.ojo2=true;
-    this.valorOjo1=true;
-    this.valorOjo2=true;
     this.paisService=paisService;
     this.paises.unshift({
       name: 'Seleccione el país',
       alpha3Code: ''
     });
+    this.bankCtrl=this.paises;
   }
   ngOnInit(): void {
     this.paisService.getPaises()
@@ -63,16 +68,35 @@ control2:boolean=false;
       )
   }
 
+  mostrarDialogo(grupo:NgForm):any{
+
+    console.log("entrada mostrar dialogo");
+    this.dialogo
+      .open(DialogoConfirmacionComponent,{
+        data:'quiere guardar??'
+      })
+      .afterClosed().pipe(finalize(()=>this.guardar(grupo)))
+      .subscribe((confirmado:boolean)=>{
+        this.popup=confirmado;
+        if(confirmado){
+          console.log("entrada mostrar dialogo si")
+          return confirmado;
+        } else {
+          console.log("entrada mostrar dialogo no")
+          return confirmado;
+        }
+      })
+
+  }
+
   async cambioOjo1()
   {
     if(this.ojo1)
     {
       this.ojo1=false;
-      this.valorOjo1=false;
     }else
     {
       this.ojo1=true;
-      this.valorOjo1=true;
     }
   }
   async cambioOjo2()
@@ -80,28 +104,31 @@ control2:boolean=false;
     if(this.ojo2)
     {
       this.ojo2=false;
-      this.valorOjo2=false;
     }else
     {
       this.ojo2=true;
-      this.valorOjo2=true;
     }
   }
 
 
   guardar(forma: NgForm){
-    this.alerta();
-    console.log(forma.value)
-    if (forma.invalid) {
-      Object.values(forma.controls).forEach(control => {
-        control.markAsTouched();
-      })
-      return;
+
+    if (this.popup) {
+      if (forma.invalid) {
+        Object.values(forma.controls).forEach(control => {
+          control.markAsTouched();
+        })
+        alert("no ha sido posible guardarlo")
+        return;
+      } else {
+
+        console.log(forma.value)
+        forma.reset();
+        alert("guardado")
+      }
     }
   }
-  alerta(){
-    this.popup=true;
-  }
+
   /**
    * Calculamos el límite mínimo de fecha a introducir, el usuario debe de ser mayor de edad
    */
@@ -121,10 +148,6 @@ control2:boolean=false;
   }
 
   contrasena(contrasena: any) {
-
-    console.log(contrasena.target.value)
-    console.log(this.seguridad)
-    console.log("aa"+contrasena.target.value.length)
     let barra: any = document.getElementById("barra");
     let caracteresEspeciales = ["!", "#", "$", "%", "&", "'", "(", ")", "+", "-", "€", "@", "/", "¿", "?", "¡", "_", "<", ">"];
     let mayusculas = 0;
@@ -132,7 +155,7 @@ control2:boolean=false;
 
     if (contrasena.target.value.length < this.cantidadCaracteres) {
       this.seguridad = this.seguridad - ((this.cantidadCaracteres - contrasena.target.value.length) * 3);
-      console.log(this.cantidadCaracteres +"-"+ contrasena.target.value.length+"="+this.seguridad)
+
       let contrasenaMayusculas=contrasena.target.value.toUpperCase();
       for (let i = 0; i <= contrasena.target.value.length; i++) {
         for (let j = 0; j < contrasenaMayusculas.length; j++) {
@@ -141,20 +164,19 @@ control2:boolean=false;
           }
         }
       }
-      if (mayusculas < this.cantidadMayusculas) {
+      if (mayusculas!=0 && mayusculas < this.cantidadMayusculas) {
         this.seguridad = this.seguridad - ((this.cantidadMayusculas - mayusculas) * 5);
       }
       for (let i = 0; i <= caracteresEspeciales.length; i++) {
         for (let j = 0; j < contrasena.target.value.length; j++) {
           if (contrasena.target.value[j] == caracteresEspeciales[i]) {
             especial++;
-            if (especial < this.cantidadEspeciales) {
-              this.seguridad = this.seguridad - ((this.cantidadEspeciales - especial) * 10);
-            }
           }
         }
       }
-
+      if (especial!=0 && especial < this.cantidadEspeciales) {
+        this.seguridad = this.seguridad - ((this.cantidadEspeciales - especial) * 10);
+      }
     } else {
       this.cantidadCaracteres++;
       this.seguridad = this.seguridad + 3;
@@ -175,6 +197,13 @@ control2:boolean=false;
       }
     }
 
+    if(this.seguridad<0){
+      this.seguridad=0;
+    }
+    this.cantidadCaracteres=contrasena.target.value.length;
+    this.cantidadMayusculas=mayusculas;
+    this.cantidadEspeciales=especial;
+
     barra.style.width = this.seguridad + "%";
     barra.style.height = "5px";
 
@@ -188,9 +217,18 @@ control2:boolean=false;
       }
     }
 
-    this.cantidadCaracteres=contrasena.target.value.length;
-    this.cantidadMayusculas=mayusculas;
-    this.cantidadEspeciales=especial;
   }
+
+  comprobarContrasenas(contrasena:any){
+
+    if(contrasena.target.value==this.usuario.contrasena){
+      contrasena.target.classList.remove("ng-invalid");
+      contrasena.target.classList.add("ng-valid");
+    }else{
+      contrasena.target.classList.remove("ng-valid");
+      contrasena.target.classList.add("ng-invalid");
+    }
+  }
+
 
 }

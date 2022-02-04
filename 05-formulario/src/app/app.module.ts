@@ -16,6 +16,9 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatDialogModule, MatDialogRef} from '@angular/material/dialog';
 import { DialogoConfirmacionComponent } from './shared/dialogo-confirmacion/dialogo-confirmacion.component';
 import { ContrasenaPipe } from './pipes/contrasena.pipe';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatSelectModule} from "@angular/material/select";
+import {NgxMatSelectSearchModule} from "ngx-mat-select-search";
 
 @NgModule({
   declarations: [
@@ -28,6 +31,7 @@ import { ContrasenaPipe } from './pipes/contrasena.pipe';
     ContrasenaPipe,
 
 
+
   ],
   imports: [
     BrowserModule,
@@ -37,7 +41,10 @@ import { ContrasenaPipe } from './pipes/contrasena.pipe';
     HttpClientModule,
     BrowserAnimationsModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    MatCheckboxModule,
+    NgxMatSelectSearchModule,
+    MatSelectModule
   ],
   providers: [{provide:MatDialogRef, useValue:{}}],
   bootstrap: [AppComponent],
