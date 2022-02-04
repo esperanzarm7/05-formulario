@@ -1,9 +1,11 @@
+<div class="alert alert-danger" *ngIf="popup">
+
+</div>
 <h4>Formularios <small> template </small></h4>
 <hr>
 <form autocomplete="off" (ngSubmit)="guardar(forma)" #forma="ngForm">
 
   <div>
-
     <div class="form-group row">
       <label class="col-2 col-form-label">Nombre</label>
       <div class="col-8">
@@ -12,9 +14,7 @@
                type="text"
                placeholder="Nombre" name="nombre" [(ngModel)]="usuario.nombre" required minlength="5" [class.is-invalid]="nombre.invalid && nombre.touched"
                #nombre="ngModel">
-
-
-
+        <small class="form-text y text-danger"*ngIf="nombre.invalid && nombre.touched">Debe contener al menos 5 caracteres</small>
       </div>
     </div>
 
@@ -23,7 +23,6 @@
   <div class="form-group row">
     <label class="col-2 col-form-label"> Apellido</label>
     <div class="input-group col-md-8">
-
       <input class="form-control"
              type="text"
              placeholder="Primer apellido"
@@ -36,8 +35,6 @@
   <div class="form-group row">
     <label class="col-2 col-form-label" >Correo</label>
     <div class="col-8">
-
-
       <input class="form-control"
              type="email"
              placeholder="Correo electrónico"
@@ -46,17 +43,15 @@
     </div>
   </div>
   <div class="form-group row">
-
     <label class="col-2 col-form-label">Paises</label>
     <div class="col-8">
-    <select #pais name="pais" class="form-control" name="pais" required [(ngModel)]="usuario.pais" [disabled]="paises.length===0" [ngClass]="{'class.is-invalid':pais.value==''}" >
+      <select #pais name="pais" class="form-control" name="pais" required [(ngModel)]="usuario.pais" [disabled]="paises.length===0" [ngClass]="{'class.is-invalid':pais.value==''}" >
 
-      <option *ngFor="let pais of paises" [value]="pais.alpha3Code">{{pais.name}}</option>
+        <option *ngFor="let pais of paises" [value]="pais.alpha3Code">{{pais.name}}</option>
 
-    </select>
-      </div>
+      </select>
+    </div>
   </div>
-
 
   <div class="form-group row">
     <label class="col-2 col-form-label">Género</label>
@@ -85,15 +80,80 @@
       </small>
     </div>
   </div>
-
-
-        <div class="form-group row">
-          <label class="col-2 col-form-label">&nbsp;</label>
-          <div class="input-group col-md-8">
-            <button type="submit" class="btn btn-outline-primary btn-block">
-              Guardar
-            </button>
-          </div>
-        </div>
-
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Fecha</label>
+    <div class="col-8">
+      <input type="date"
+             name="fecha" [(ngModel)]="usuario.fecha"
+             placeholder="yyyy-MM-dd"
+             min="{{this.fechaMaxima}}" max="{{this.fechaMinima}}"
+             required />
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Conocimientos en:</label>
+    <div class="col-8">
+      <input type="checkbox" name="angular" value="angular" [(ngModel)]="usuario.lenguajes[0]" > Angular<br>
+      <input type="checkbox" name="js" value="JavaScript" [(ngModel)]="usuario.lenguajes[1]" >JavaScript<br>
+      <input type="checkbox" name="bootstrap" value="Bootstrap" [(ngModel)]="usuario.lenguajes[2]" > Bootstrap<br>
+      <input type="checkbox" name="php" value="PHP"[(ngModel)]="usuario.lenguajes[3]" > PHP<br>
+      <input type="checkbox" name="css" value="CSS"[(ngModel)]="usuario.lenguajes[4]" > CSS<br>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Fecha</label>
+    <div class="col-8">
+      <input type="color"
+             name="color" [(ngModel)]="usuario.color"
+             required />
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Contraseña</label>
+    <div class="col-8">
+      <input
+        type="password"
+        name="contrasena"
+        placeholder="Contraseña"
+        [(ngModel)]="usuario.contrasena" required
+        (input)="this.contrasena($event)"
+        value="{{ this.usuario.contrasena | contrasena:!this.valorOjo1}}"
+      />
+      <div class="d-inline ">
+        <img *ngIf="ojo1" (click)="cambioOjo1()" src="./assets/ojocerrado.png">
+        <img *ngIf="!ojo1" (click)="cambioOjo1()" src="./assets/ojoabierto.png">
+      </div>
+      <div class="w-50"><div id="barra"></div></div>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-2 col-form-label">Confirmar Contraseña</label>
+    <div class="col-8">
+      <input
+        type="password"
+        name="confirmarcontrasena"
+        placeholder="Confirmar Contraseña"
+        [(ngModel)]="usuario.confirmarcontrasena" required
+        value="{{ this.usuario.confirmarcontrasena | contrasena:this.valorOjo2}}"
+      />
+      <div class="d-inline ">
+        <img *ngIf="ojo2" (click)="cambioOjo2()" src="./assets/ojocerrado.png">
+        <img *ngIf="!ojo2" (click)="cambioOjo2()" src="./assets/ojoabierto.png">
+      </div>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-2 col-form-label">&nbsp;</label>
+    <div class="input-group col-md-8">
+      <button  class="w-25 btn btn-outline-danger btn-block" (click)="this.resetForm(forma)">reset</button>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-2 col-form-label">&nbsp;</label>
+    <div class="input-group col-md-8">
+      <button type="submit" class="btn btn-outline-primary btn-block">
+        Guardar
+      </button>
+    </div>
+  </div>
 </form>
